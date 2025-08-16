@@ -10,7 +10,13 @@ use App\Models\Product;
 
 class OrderController extends Controller
 {
-      public function processPayment(Request $request)
+    /**
+     * Place an order.
+     *
+     * This method processes the payment for a product order.
+     *
+     */
+    public function processPayment(Request $request)
     {
         $validated = $request->validate([
             'payment_method_id' => 'required|string',
@@ -49,7 +55,7 @@ class OrderController extends Controller
                     ]);
 
                 case 'succeeded':
-                    $order = $this->createOrder($intent, $validated,"paid");
+                    $order = $this->createOrder($intent, $validated, "paid");
                     return response()->json([
                         'success' => true,
                         'order_id' => $order->id,
@@ -81,7 +87,7 @@ class OrderController extends Controller
 
     private function createOrder($paymentIntent, $validated, $status)
     {
-        $product=Product::findOrFail($validated['product_id']);
+        $product = Product::findOrFail($validated['product_id']);
         return Order::create([
             'user_id' => auth()->id(),
             'product_id' => $product->id,
@@ -95,7 +101,7 @@ class OrderController extends Controller
         ]);
     }
 
-     /**
+    /**
      * Display the initial order list.
      *
      * Fetches the first 15 orders.
@@ -110,7 +116,7 @@ class OrderController extends Controller
         return view('orders', compact('orders'));
     }
 
-     /**
+    /**
      * Fetch more orders for infinite scroll.
      *
      * Triggered when the user scrolls down and requests more data.
