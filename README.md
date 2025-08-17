@@ -46,6 +46,10 @@ Copy the example `.env` file and update database
 ```bash
 cp .env.example .env
 ```
+Update the following in `.env` with the credentials shared via email:
+
+STRIPE_KEY=your_stripe_public_key
+STRIPE_SECRET=your_stripe_secret_key
 
 
 
