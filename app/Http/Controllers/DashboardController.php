@@ -17,14 +17,17 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::with('images')
+        $products = Product::with(['images' => function ($query) {
+            $query->where('status', 'A');
+        }])
             ->orderBy('id', 'desc')
+            ->where(['status' => 'A'])
             ->paginate(15);
 
         return view('dashboard', compact('products'));
     }
 
-     /**
+    /**
      * Fetch more products for infinite scroll.
      *
      * Triggered when the user scrolls down and requests more data.
@@ -34,7 +37,12 @@ class DashboardController extends Controller
     public function loadMoreProducts(Request $request)
     {
         $page = $request->get('page', 1);
-        $products = Product::with('images')->orderBy('id', 'desc')->paginate(15, ['*'], 'page', $page);
+        $products = Product::with(['images' => function ($query) {
+            $query->where('status', 'A');
+        }])
+            ->orderBy('id', 'desc')
+            ->where(['status' => 'A'])
+            ->paginate(15, ['*'], 'page', $page);
 
         return response()->json([
             'data' => $products->items(),
